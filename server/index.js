@@ -1,11 +1,6 @@
-import express from "express";
-import dotenv from "dotenv";
-import pkg from "pg";
-const { Client } = pkg;
-
-
-import api from './routes/index';
-
+const express = require("express");
+const dotenv = require("dotenv");
+const apiRouter = require('./routes/index.js');
 
 dotenv.config();
 
@@ -13,40 +8,36 @@ const app = express();
 
 app.use(express.json());
 
-
-app.use('/api', api);
+app.use("/api", apiRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to the Express.js backend!");
 });
 
-// const { Pool } = require('pg');
-console.log({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-const client = new Client({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
-client
-	.connect()
-	.then(() => {
-		console.log('Connected to PostgreSQL database');
-	})
-	.catch((err) => {
-		console.error('Error connecting to PostgreSQL database', err);
-	});
 
-// testConnection();
+app.post("/register", async (req, res) => {
+  try {
+    // const { description } = req.body;
+  
+    const allTodos = await pool.query('SELECT * FROM "user"');
+    console.log(allTodos);
 
-// Server
+
+    res.json(newTodo.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+
+
+process.on("SIGINT", async () => {
+  console.log("Closing database connection...");
+  await pool.end();
+  console.log("Database connection closed.");
+  process.exit(0);
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

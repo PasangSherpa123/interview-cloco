@@ -1,8 +1,8 @@
-import express from 'express';
-import userRouter from './user';
-import artistRouter from './artist';
-import authRouter from './auth';
-import musicRouter from './music';
+const express = require('express');
+const userRouter = require("./user.js");
+const artistRouter = require('./artist.js');
+const authRouter = require('./auth.js');
+const musicRouter = require('./music.js');
 
 const app = express();
 
@@ -11,4 +11,4 @@ app.use('/user', userRouter);
 app.use('/artist', artistRouter);
 app.use('/artist/:artistId/songs', musicRouter);
 
-export default app;
+module.exports = app;

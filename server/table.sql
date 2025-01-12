@@ -1,4 +1,6 @@
-CREATE TABLE user (
+CREATE TYPE gender_enum AS ENUM ('m', 'f', 'o');
+CREATE TYPE genre_enum AS ENUM('rnb', 'country', 'classic', 'rock', 'jazz');
+CREATE TABLE IF NOT EXISTS "user" (
     id SERIAL PRIMARY KEY,           
     first_name VARCHAR(255) NOT NULL,
     last_name VARCHAR(255) NOT NULL,
@@ -6,32 +8,32 @@ CREATE TABLE user (
     password VARCHAR(500) NOT NULL,
     phone VARCHAR(20) UNIQUE NOT NULL,
     dob DATE,
-    gender ENUM('m', 'f', 'o') DEFAULT 'o',
+    gender gender_enum DEFAULT 'o',
     address VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW() ON UPDATE NOW()
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 
 
-CREATE TABLE artist (
+CREATE TABLE IF NOT EXISTS artist (
     id SERIAL PRIMARY KEY,           
     name VARCHAR(255) NOT NULL,
     dob DATE,
-    gender ENUM('m', 'f', 'o') DEFAULT 'o',
+    gender gender_enum DEFAULT 'o',
     address VARCHAR(255) NOT NULL,
     first_release_year SMALLINT NOT NULL
     no_of_albums_release INT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW() ON UPDATE NOW()
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE music (
+CREATE TABLE IF NOT EXISTS music (
     id SERIAL PRIMARY KEY,
     artist_id INT NOT NULL REFERENCES artist(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     album_name VARCHAR(255),
-    genre ENUM('rnb', 'country', 'classic', 'rock', 'jazz') NOT NULL,
+    genre genre_enum NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW() ON UPDATE NOW()
+    updated_at TIMESTAMP DEFAULT NOW()
 );
