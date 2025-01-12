@@ -1,5 +1,14 @@
 const pool = require("../config/db.js");
-const createUserDb = async ({ first_name, last_name, email, hashedPassword, phone, dob, gender,address }) => {
+const createUserDb = async ({
+  first_name,
+  last_name,
+  email,
+  hashedPassword,
+  phone,
+  dob,
+  gender,
+  address,
+}) => {
   const { rows: user } = await pool.query(
     `
         INSERT INTO "user" 
@@ -21,7 +30,15 @@ const createUserDb = async ({ first_name, last_name, email, hashedPassword, phon
   );
   return user[0];
 };
+const getUserByEmailDb = async (email) => {
+  const { rows: user } = await pool.query(
+    `SELECT id, first_name, last_name, email, password FROM "user" WHERE email = LOWER($1)`,
+    [email]
+  );
+  return user[0];
+};
 
 module.exports = {
   createUserDb,
+  getUserByEmailDb,
 };
