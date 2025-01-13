@@ -34,7 +34,44 @@ const getArtists = async ({ limit, offset }) => {
   );
   return artists;
 };
+
+const updateArtistDb = async ({
+  name,
+  dob,
+  gender,
+  address,
+  firstReleaseYear,
+  noOfAlbumsRelease,
+  id,
+}) => {
+  const { rows: product } = await pool.query(
+    `
+        UPDATE artist
+        SET 
+            name = $1,
+            dob = $2,
+            gender = $3,
+            address = $4,
+            first_release_year = $5,
+            no_of_albums_release = $6,
+            updated_at = NOW()
+        WHERE id = $7 RETURNING *;
+    `,
+    [name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease, id]
+  );
+  return product[0];
+};
+
+const deleteProductDb = async ({ id }) => {
+  const { rows: artist } = await pool.query(
+    "DELETE FROM artist where id = $1 returning *",
+    [id]
+  );
+  return artist[0];
+};
 module.exports = {
   createArtistDb,
   getArtists,
+  updateArtistDb,
+  deleteProductDb,
 };

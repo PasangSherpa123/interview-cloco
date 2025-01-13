@@ -1,7 +1,12 @@
 const { body, validationResult } = require("express-validator");
 
 // const { createUserDb, getUserByEmailDb } = require("../db/user");
-const { createArtistDb, getArtists} = require('../db/artist');
+const {
+  createArtistDb,
+  getArtists,
+  updateArtistDb,
+  deleteProductDb,
+} = require("../db/artist");
 
 const createArtist = [
   body("name")
@@ -18,7 +23,6 @@ const createArtist = [
     .withMessage("Address is required")
     .trim(),
 
-
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -27,22 +31,21 @@ const createArtist = [
     next();
   },
   async (req, res) => {
-    const {
-      name, 
-      dob, 
-      gender,
-      address,
-      firstReleaseYear,
-      noOfAlbumsRelease,
-    } = req.body;
+    const { name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease } =
+      req.body;
 
     try {
       const artist = await createArtistDb({
-        name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease
+        name,
+        dob,
+        gender,
+        address,
+        firstReleaseYear,
+        noOfAlbumsRelease,
       });
       res.status(201).json({
         message: "Artist created successfully!",
-        artist: artist
+        artist: artist,
       });
     } catch (error) {
       console.error(error);
@@ -54,15 +57,45 @@ const createArtist = [
 ];
 
 const getAllArtists = async (req, res) => {
-    const { page = 1 } = req.query;
-    const limit = 12;
-    const offset = (page - 1) * limit;
-  
-    const artists = await getArtists(limit, offset);
-    res.status(200).json(artists);
-  };
+  const { page = 1 } = req.query;
+  const limit = 12;
+  const offset = (page - 1) * limit;
+
+  const artists = await getArtists(limit, offset);
+  res.status(200).json(artists);
+};
+
+const updateArtistById = async (req, res) => {
+  const { id } = req.params;
+  const { name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease } =
+    req.body;
+
+  const artist = await updateArtistDb({
+    name,
+    dob,
+    gender,
+    address,
+    firstReleaseYear,
+    noOfAlbumsRelease,
+    id,
+  });
+  res.status(200).json({
+    message: "Artist updated successfully",
+    artist,
+  });
+};
+const deleteArtistById = async (req, res) => {
+  const { id } = req.params;
+  const deletedArtist = await deleteProductDb({ id });
+  res.status(200).json({
+    message: "Artist deleted successfully",
+    deletedArtist,
+  });
+};
 
 module.exports = {
   createArtist,
-  getAllArtists
+  getAllArtists,
+  updateArtistById,
+  deleteArtistById,
 };

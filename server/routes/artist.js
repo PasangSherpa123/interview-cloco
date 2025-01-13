@@ -1,10 +1,15 @@
-const express = require('express');
-const { createArtist, getAllArtists } = require('../controllers/artist');
+const express = require("express");
+const {
+  createArtist,
+  getAllArtists,
+  updateArtistById,
+  deleteArtistById,
+} = require("../controllers/artist");
 const router = express.Router();
 
+router.post("/create", createArtist);
+router.get("/", getAllArtists);
+router.put("/:id", updateArtistById);
+router.delete('/:id', deleteArtistById);
 
-router.post('/create', createArtist);
-router.get('/', getAllArtists);
-
-
-module.exports=  router;
+module.exports = router;
