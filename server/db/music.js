@@ -14,7 +14,7 @@ const createMusicDb = async ({ artistId, title, albumName, genre }) => {
   return music[0];
 };
 
-const getMusics = async ({ artistId, limit, offset }) => {
+const getMusicsDb = async ({ artistId, limit, offset }) => {
   const { rows: musics } = await pool.query(
     `SELECT * FROM "music" WHERE artist_id = $1 LIMIT $2 OFFSET $3 `,
     [artistId, limit, offset]
@@ -58,5 +58,5 @@ const deleteMusicDb = async ({ id }) => {
 };
 module.exports = {
   createMusicDb,
-  getMusics,
+  getMusicsDb,
 };

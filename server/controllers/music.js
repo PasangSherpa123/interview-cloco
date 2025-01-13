@@ -1,5 +1,5 @@
 const { body, validationResult } = require("express-validator");
-const { createMusicDb } = require("../db/music");
+const { createMusicDb, getMusicsDb } = require("../db/music");
 
 const createMusic = [
   body("artistId")
@@ -48,10 +48,12 @@ const createMusic = [
 
 const getAllMusic = async (req, res) => {
   const { page = 1 } = req.query;
+  const {artistId} = req.params;
   const limit = 12;
   const offset = (page - 1) * limit;
+  console.log(artistId);
 
-  const artists = await getArtists(limit, offset);
+  const artists = await getMusicsDb({limit, offset, artistId});
   res.status(200).json(artists);
 };
 
