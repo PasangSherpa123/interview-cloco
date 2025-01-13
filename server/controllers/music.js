@@ -1,5 +1,5 @@
 const { body, validationResult } = require("express-validator");
-const { createMusicDb, getMusicsDb, updateMusicDb } = require("../db/music");
+const { createMusicDb, getMusicsDb, updateMusicDb, deleteMusicDb } = require("../db/music");
 
 const createMusic = [
   body("artistId")
@@ -75,8 +75,23 @@ const updateMusicById = async (req, res) => {
   });
 };
 
+const deleteMusicById = async (req, res) => {
+  console.log(req.params)
+  const { musicId } = req.params;
+  console.log(musicId);
+
+  const music = await deleteMusicDb({
+    id: musicId,
+  });
+  res.status(200).json({
+    message: "Music deleted successfully",
+    music,
+  });
+};
+
 module.exports = {
   createMusic,
   getAllMusic,
   updateMusicById,
+  deleteMusicById
 };

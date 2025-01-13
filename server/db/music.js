@@ -48,14 +48,15 @@ const updateMusicDb = async ({ artistId, title, albumName, genre, id }) => {
 };
 
 const deleteMusicDb = async ({ id }) => {
-  const { rows: artist } = await pool.query(
-    "DELETE FROM artist where id = $1 returning *",
+  const { rows: music } = await pool.query(
+    "DELETE FROM music where id = $1 returning *",
     [id]
   );
-  return artist[0];
+  return music[0];
 };
 module.exports = {
   createMusicDb,
   getMusicsDb,
   updateMusicDb,
+  deleteMusicDb
 };
