@@ -16,16 +16,25 @@ const createArtistDb = async ({
             RETURNING id, name, first_release_year, no_of_albums_release;
           `,
     [
-        name,
-         dob || null, 
-         gender || "o", 
-         address,
-         firstReleaseYear || null,
-         noOfAlbumsRelease || 0
+      name,
+      dob || null,
+      gender || "o",
+      address,
+      firstReleaseYear || null,
+      noOfAlbumsRelease || 0,
     ]
   );
   return artist[0];
 };
-module.exports ={
-    createArtistDb
-}
+
+const getArtists = async ({ limit, offset }) => {
+  const { rows: artists } = await pool.query(
+    `SELECT * FROM "artist" LIMIT $1 OFFSET $2 `,
+    [limit, offset]
+  );
+  return artists;
+};
+module.exports = {
+  createArtistDb,
+  getArtists,
+};

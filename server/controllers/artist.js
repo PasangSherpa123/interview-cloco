@@ -1,7 +1,7 @@
 const { body, validationResult } = require("express-validator");
 
 // const { createUserDb, getUserByEmailDb } = require("../db/user");
-const { createArtistDb} = require('../db/artist');
+const { createArtistDb, getArtists} = require('../db/artist');
 
 const createArtist = [
   body("name")
@@ -53,6 +53,16 @@ const createArtist = [
   },
 ];
 
+const getAllArtists = async (req, res) => {
+    const { page = 1 } = req.query;
+    const limit = 12;
+    const offset = (page - 1) * limit;
+  
+    const artists = await getArtists(limit, offset);
+    res.status(200).json(artists);
+  };
+
 module.exports = {
   createArtist,
+  getAllArtists
 };
