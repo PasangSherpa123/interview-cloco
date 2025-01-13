@@ -9,6 +9,6 @@ const app = express();
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/artist', artistRouter);
-app.use('/artist/:artistId/songs', musicRouter);
+app.use('/songs/:artistId/', musicRouter);
 
 module.exports = app;

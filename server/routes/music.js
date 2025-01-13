@@ -1,5 +1,7 @@
-
-const express = require('express');
+const express = require("express");
+const { createMusic } = require("../controllers/music");
 const router = express.Router();
 
-module.exports=  router;
+router.post("/create", createMusic);
+
+module.exports = router;
