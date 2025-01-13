@@ -22,31 +22,29 @@ const getMusicsDb = async ({ artistId, limit, offset }) => {
   return musics;
 };
 
-const updateMusicDb = async ({
-  name,
-  dob,
-  gender,
-  address,
-  firstReleaseYear,
-  noOfAlbumsRelease,
-  id,
-}) => {
-  const { rows: product } = await pool.query(
+const updateMusicDb = async ({ artistId, title, albumName, genre, id }) => {
+  console.log({
+    artistId,
+    title,
+    albumName,
+    genre,
+    id,
+  });
+  const { rows: music } = await pool.query(
     `
-        UPDATE artist
+        UPDATE music
         SET 
-            name = $1,
-            dob = $2,
-            gender = $3,
-            address = $4,
-            first_release_year = $5,
-            no_of_albums_release = $6,
+            artist_id = $1,
+            title = $2,
+            album_name = $3,
+            genre = $4,
+
             updated_at = NOW()
-        WHERE id = $7 RETURNING *;
+        WHERE id = $5 RETURNING *;
     `,
-    [name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease, id]
+    [artistId, title, albumName, genre, id]
   );
-  return product[0];
+  return music[0];
 };
 
 const deleteMusicDb = async ({ id }) => {
@@ -59,4 +57,5 @@ const deleteMusicDb = async ({ id }) => {
 module.exports = {
   createMusicDb,
   getMusicsDb,
+  updateMusicDb,
 };

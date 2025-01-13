@@ -44,7 +44,7 @@ const updateArtistDb = async ({
   noOfAlbumsRelease,
   id,
 }) => {
-  const { rows: product } = await pool.query(
+  const { rows: artist } = await pool.query(
     `
         UPDATE artist
         SET 
@@ -59,10 +59,10 @@ const updateArtistDb = async ({
     `,
     [name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease, id]
   );
-  return product[0];
+  return artist[0];
 };
 
-const deleteProductDb = async ({ id }) => {
+const deleteArtistDb = async ({ id }) => {
   const { rows: artist } = await pool.query(
     "DELETE FROM artist where id = $1 returning *",
     [id]
@@ -73,5 +73,5 @@ module.exports = {
   createArtistDb,
   getArtists,
   updateArtistDb,
-  deleteProductDb,
+  deleteArtistDb,
 };

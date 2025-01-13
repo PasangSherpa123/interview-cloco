@@ -5,7 +5,7 @@ const {
   createArtistDb,
   getArtists,
   updateArtistDb,
-  deleteProductDb,
+  deleteArtistDb,
 } = require("../db/artist");
 
 const createArtist = [
@@ -86,7 +86,7 @@ const updateArtistById = async (req, res) => {
 };
 const deleteArtistById = async (req, res) => {
   const { id } = req.params;
-  const deletedArtist = await deleteProductDb({ id });
+  const deletedArtist = await deleteArtistDb({ id });
   res.status(200).json({
     message: "Artist deleted successfully",
     deletedArtist,
