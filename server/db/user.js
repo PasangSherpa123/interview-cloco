@@ -21,7 +21,7 @@ const createUserDb = async ({
       first_name,
       last_name,
       email,
-      hashedPassword,
+      hashedPassword || "",
       phone,
       dob || null,
       gender || "o",

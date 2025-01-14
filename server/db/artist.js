@@ -67,6 +67,7 @@ const deleteArtistDb = async ({ id }) => {
     "DELETE FROM artist where id = $1 returning *",
     [id]
   );
+  console.log(artist);
   return artist[0];
 };
 module.exports = {

@@ -86,6 +86,8 @@ const updateArtistById = async (req, res) => {
 };
 const deleteArtistById = async (req, res) => {
   const { id } = req.params;
+  console.log(req.params);
+  console.log('id is ', id);
   const deletedArtist = await deleteArtistDb({ id });
   res.status(200).json({
     message: "Artist deleted successfully",
