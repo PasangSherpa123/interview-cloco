@@ -5,13 +5,21 @@ const {
   updateMusicDb,
   deleteMusicDb,
 } = require("../db/music");
+const {
+  createUserDb,
+  getUsersDb,
+  getUserByEmailDb,
+  getUserByPhoneDb,
+  updateUserDb,
+  deleteUserDb,
+} = require("../db/user");
 
 const createUser = [
-  body("firstName")
+  body("first_name")
     .isLength({ min: 3 })
     .withMessage("First Name is required")
     .trim(),
-  body("lastName")
+  body("last_name")
     .isLength({ min: 3 })
     .withMessage("Last Name is required")
     .trim(),
@@ -41,76 +49,86 @@ const createUser = [
     next();
   },
   async (req, res) => {
-
     try {
-      const {
+      const { first_name, last_name, email, phone, dob, gender, address } =
+        req.body;
+      const checkUser = await getUserByEmailDb(email);
+      if (checkUser) {
+        return res
+          .status(400)
+          .json({ message: "User with this email already exists" });
+      }
+      const checkUserByPhone = await getUserByPhoneDb(phone);
+      if (checkUserByPhone) {
+        return res
+          .status(400)
+          .json({ message: "User with this phone already exists" });
+      }
+      const user = await createUserDb({
         first_name,
         last_name,
         email,
+        hashedPassword: "",
         phone,
         dob,
         gender,
         address,
-      } = req.body;
+      });
       res.status(201).json({
-        message: "Music created successfully!",
-        music: music,
+        message: "User created successfully!",
+        user: user,
       });
     } catch (error) {
       console.error(error);
       res
         .status(500)
-        .json({ error: "An error occurred while registering the artist." });
+        .json({ error: "An error occurred while registering the user." });
     }
   },
 ];
 
-const getAllMusic = async (req, res) => {
+const getAllUsers = async (req, res) => {
   const { page = 1 } = req.query;
-  const { artistId } = req.params;
   const limit = 12;
   const offset = (page - 1) * limit;
-  console.log(artistId);
 
-  const artists = await getMusicsDb({ limit, offset, artistId });
-  res.status(200).json(artists);
+  const users = await getUsersDb(limit, offset);
+  res.status(200).json(users);
 };
 
-const updateMusicById = async (req, res) => {
-  const { artistId, musicId: id } = req.params;
-  const { title, albumName, genre } = req.body;
-  console.log({ title, albumName, genre });
+const updateUserById = async (req, res) => {
+  const { userId } = req.params;
+  const { first_name, last_name, dob, gender, address } = req.body;
 
-  const music = await updateMusicDb({
-    artistId,
-    title,
-    albumName,
-    genre,
-    id,
+  const user = await updateUserDb({
+    first_name,
+    last_name,
+    dob,
+    gender,
+    address,
+    id: userId,
   });
   res.status(200).json({
-    message: "Music updated successfully",
-    music,
+    message: "User updated successfully",
+    user,
   });
 };
 
-const deleteMusicById = async (req, res) => {
-  console.log(req.params);
-  const { musicId } = req.params;
-  console.log(musicId);
+const deleteUserById = async (req, res) => {
+  const { userId } = req.params;
 
-  const music = await deleteMusicDb({
-    id: musicId,
+  const user = await deleteUserDb({
+    id: userId,
   });
   res.status(200).json({
-    message: "Music deleted successfully",
-    music,
+    message: "User deleted successfully",
+    user,
   });
 };
 
 module.exports = {
-  createMusic,
-  getAllMusic,
-  updateMusicById,
-  deleteMusicById,
+  createUser,
+  getAllUsers,
+  updateUserById,
+  deleteUserById,
 };
