@@ -5,9 +5,10 @@ import {
   addArtist,
   updateArtist,
   deleteArtist,
-} from "../api/artist";
+} from "../api/artistApi";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router";
 
 const ArtistList = () => {
   const [artists, setArtists] = useState([]);
@@ -15,6 +16,7 @@ const ArtistList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(null);
+  const navigate = useNavigate();
 
   // Fetch artists on component mount
   useEffect(() => {
@@ -102,7 +104,6 @@ const ArtistList = () => {
   // Handle delete artist
   const handleDeleteArtist = async () => {
     try {
-        
       await deleteArtist(selectedArtist.id);
       setArtists((prev) =>
         prev.filter((artist) => artist.id !== selectedArtist.id)
@@ -145,10 +146,13 @@ const ArtistList = () => {
         data={artists}
         onEdit={handleEdit}
         onDelete={(artist) => {
-        
           setSelectedArtist(artist);
           setShowDeleteModal(true);
         }}
+        onManageSongs={(artist) => {
+          navigate(`/artists/${artist.id}/songs`);
+        }}
+        showManageSongs={true}
       />
 
       {/* Add/Edit Modal */}

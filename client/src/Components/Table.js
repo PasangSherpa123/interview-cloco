@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-const Table = ({ columns, data, onEdit, onDelete }) => {
+const Table = ({ columns, data, onEdit, onDelete, onManageSongs, showManageSongs }) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
@@ -26,6 +26,15 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
                 </td>
               ))}
               <td className="py-3 px-6 text-center">
+                {/* Conditionally Render Manage Songs Button */}
+                {showManageSongs && (
+                  <button
+                    onClick={() => onManageSongs(row)}
+                    className="bg-green-500 text-white px-2 py-1 rounded mr-2"
+                  >
+                    Manage Songs
+                  </button>
+                )}
                 {/* Edit Button */}
                 <button
                   onClick={() => onEdit(row)}

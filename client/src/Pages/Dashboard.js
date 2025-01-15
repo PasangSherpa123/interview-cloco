@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import Sidebar from "../Components/Sidebar.js";
 import UserList from "../Components/UserList";
 import ArtistList from "../Components/ArtistList";
+import SongsList from "../Components/SongsList.js";
 
 const Dashboard = () => {
   return (
@@ -13,6 +14,7 @@ const Dashboard = () => {
           <Routes>
             <Route path="/users" element={<UserList />} />
             <Route path="/artists" element={<ArtistList />} />
+            <Route path="/artists/:artistId/songs" element={<SongsList />} />
           </Routes>
         </div>
       </div>
