@@ -6,7 +6,7 @@ const musicRouter = require('./music.js');
 
 const app = express();
 
-app.use('/auth', authRouter);
+app.use('/auth',  authRouter);
 app.use('/user', userRouter);
 app.use('/artist', artistRouter);
 app.use('/songs', musicRouter);

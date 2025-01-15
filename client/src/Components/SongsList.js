@@ -201,6 +201,7 @@ const SongsList = () => {
                 <button
                   type="button"
                   onClick={() => {
+                    formik.resetForm();
                     setShowAddModal(false);
                     setShowEditModal(false);
                   }}

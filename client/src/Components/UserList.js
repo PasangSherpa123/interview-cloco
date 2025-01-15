@@ -269,6 +269,7 @@ const UserList = () => {
                 <button
                   type="button"
                   onClick={() => {
+                    formik.resetForm();
                     setShowAddModal(false);
                     setShowEditModal(false);
                   }}

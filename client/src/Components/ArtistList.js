@@ -275,6 +275,7 @@ const ArtistList = () => {
                 <button
                   type="button"
                   onClick={() => {
+                    formik.resetForm();
                     setShowAddModal(false);
                     setShowEditModal(false);
                   }}
