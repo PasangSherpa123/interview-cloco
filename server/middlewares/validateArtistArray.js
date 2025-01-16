@@ -4,6 +4,7 @@ const validateArtistsArray = [
     .isArray({ min: 1 })
     .withMessage("Artists must contain at least one artist")
     .custom((value) => {
+      console.log(value);
       value.forEach((artist, index) => {
         if (!artist.name || typeof artist.name !== "string") {
           throw new Error(
@@ -16,6 +17,11 @@ const validateArtistsArray = [
           );
         }
         if (!artist.address || typeof artist.address !== "string") {
+          throw new Error(
+            `Artist at index ${index} does not have a valid address.`
+          );
+        }
+        if (!artist.dob || typeof artist.dob !== "string") {
           throw new Error(
             `Artist at index ${index} does not have a valid address.`
           );

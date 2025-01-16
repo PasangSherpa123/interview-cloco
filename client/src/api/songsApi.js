@@ -8,7 +8,7 @@ export const fetchSongs = async({artistId, currentPage}) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching songs:', error);
-    throw error;
+    return error;
   }
 };
 
@@ -19,7 +19,7 @@ export const addSong = async (songData) => {
     return response.data;
   } catch (error) {
     console.error('Error adding song:', error);
-    throw error;
+    return error;
   }
 };
 
@@ -31,7 +31,7 @@ export const updateSong = async (artistId, id, updatedData) => {
     return response.data;
   } catch (error) {
     console.error('Error updating artist:', error);
-    throw error;
+    return error;
   }
 };
 
@@ -42,6 +42,6 @@ export const deleteSong = async (id) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting artist:', error);
-    throw error;
+    return error;
   }
 };

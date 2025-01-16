@@ -8,18 +8,29 @@ export const fetchArtists = async (currentPage) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching artists:", error);
-    throw error;
+    return error;
   }
 };
 
-// Fetch all artists
+// Fetch all artists export
 export const fetchArtistsExport = async () => {
   try {
     const response = await apiClient.get("/artist/export");
     return response.data;
   } catch (error) {
     console.error("Error fetching artists:", error);
-    throw error;
+    return error;
+  }
+};
+
+// Fetch all artists
+export const addArtistImport = async (data) => {
+  try {
+    const response = await apiClient.post("/artist/create/import",data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching artists:", error);
+    return error;
   }
 };
 // Add a new artist
@@ -29,7 +40,7 @@ export const addArtist = async (artistData) => {
     return response.data;
   } catch (error) {
     console.error("Error adding artist:", error);
-    throw error;
+    return error;
   }
 };
 
@@ -40,7 +51,7 @@ export const updateArtist = async (id, updatedData) => {
     return response.data;
   } catch (error) {
     console.error("Error updating artist:", error);
-    throw error;
+    return error;
   }
 };
 
@@ -52,6 +63,6 @@ export const deleteArtist = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Error deleting artist:", error);
-    throw error;
+    return error;
   }
 };

@@ -6,6 +6,7 @@ import {
   updateArtist,
   deleteArtist,
   fetchArtistsExport,
+  addArtistImport,
 } from "../api/artistApi";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -23,24 +24,24 @@ const ArtistList = () => {
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const [reloadData, setReloadData] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   const triggerFileInput = () => {
     fileInputRef.current.click();
   };
-
+  const getArtists = async () => {
+    try {
+      const data = await fetchArtists(currentPage);
+      setArtists(data.artists);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Failed to fetch artists:", error);
+    }
+  };
   // Fetch artists on component mount
   useEffect(() => {
-    const getArtists = async () => {
-      try {
-        const data = await fetchArtists(currentPage);
-        setArtists(data.artists);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Failed to fetch artists:", error);
-      }
-    };
     getArtists();
   }, [currentPage]);
 
@@ -168,16 +169,21 @@ const ArtistList = () => {
   };
 
   const handleImport = (event) => {
+    setReloadData(false);
     const file = event.target.files[0];
     if (!file) return;
 
     Papa.parse(file, {
-      header: true, // Ensures CSV headers are parsed as object keys
-      complete: (results) => {
+      header: true,
+      complete: async (results) => {
         const importedArtists = results.data;
-        console.log("Parsed Artists:", importedArtists);
-        setImportedArtists(importedArtists);
-        // sendToBackend(importedArtists);
+        let filteredArtists = importedArtists.filter(
+          (item) => Object.keys(item).length > 3
+        );
+
+        setImportedArtists(filteredArtists);
+        await addArtistImport({ artists: filteredArtists });
+        getArtists();
       },
       error: (error) => {
         console.error("Error parsing CSV:", error);

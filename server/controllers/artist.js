@@ -7,6 +7,7 @@ const {
   updateArtistDb,
   deleteArtistDb,
   getAllArtistsDb,
+  createArtistsImportDb,
 } = require("../db/artist");
 const { validateArtistsArray } = require("../middlewares/validateArtistArray");
 
@@ -61,22 +62,41 @@ const createArtist = [
 const createArtistImport = [
   validateArtistsArray,
   async (req, res) => {
-    const { name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease } =
-      req.body;
+    const { artists } = req.body;
+    // const { name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease } =
+    //   req.body;
 
+    console.log(artists);
     try {
-      const artist = await createArtistDb({
-        name,
-        dob,
-        gender,
-        address,
-        firstReleaseYear,
-        noOfAlbumsRelease,
+      const values = [];
+      const placeholders = [];
+
+      // Construct the query dynamically
+      artists.forEach((artist, index) => {
+        const start = index * 6;
+        placeholders.push(
+          `($${start + 1}, $${start + 2}, $${start + 3}, $${start + 4}, $${
+            start + 5
+          }, $${start + 6}, NOW(), NOW())`
+        );
+        values.push(
+          artist.name,
+          artist.gender,
+          artist.dob,
+          artist.address,
+          artist.first_release_year,
+          artist.no_of_albums_release
+        );
       });
-      res.status(201).json({
-        message: "Artist created successfully!",
-        artist: artist,
+      console.log(values);
+      console.log(placeholders.join(", "));
+
+      const createdArtists = await createArtistsImportDb({
+        placeholder: placeholders.join(", "),
+        values,
       });
+      console.log(createdArtists);
+      res.status(200).json(createdArtists);
     } catch (error) {
       console.error(error);
       res
