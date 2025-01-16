@@ -4,6 +4,8 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useParams } from "react-router";
 import { addSong, deleteSong, fetchSongs, updateSong } from "../api/songsApi";
+import { toast } from "react-toastify";
+import { successToast } from "../Helpers/toasterData";
 
 const SongsList = () => {
   const [songs, setSongs] = useState([]);
@@ -54,11 +56,13 @@ const SongsList = () => {
             ...values,
             album_name: values.albumName,
           };
+          console.log(selectedSong, 'selected song is this');
           await updateSong(
             selectedSong.artist_id,
             selectedSong.id,
             updatedSong
           );
+          toast.success("Song update successful", successToast);
           setSongs((prev) =>
             prev.map((song) =>
               song.id === selectedSong.id
@@ -73,6 +77,7 @@ const SongsList = () => {
             artistId,
           };
           await addSong(newSong);
+          toast.success("Song add successful", successToast);
           setSongs((prev) => [
             ...prev,
             { ...newSong, album_name: newSong.albumName },
@@ -92,6 +97,7 @@ const SongsList = () => {
   const handleDeleteSong = async () => {
     try {
       await deleteSong(selectedSong.id);
+      toast.success("Song delete successful", successToast);
       setSongs((prev) => prev.filter((song) => song.id !== selectedSong.id));
       setShowDeleteModal(false);
     } catch (error) {
@@ -101,6 +107,7 @@ const SongsList = () => {
 
   // Open edit modal
   const handleEdit = (song) => {
+    console.log('edit is ', song);
     setSelectedSong(song);
     formik.setValues({
       title: song.title,

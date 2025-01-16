@@ -1,9 +1,10 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { registerUser } from "../api/authApi"; // Replace with your actual API call
-
+import { successToast } from "../Helpers/toasterData";
+import { toast } from "react-toastify";
 const Register = () => {
   const navigate = useNavigate();
 
@@ -16,6 +17,7 @@ const Register = () => {
       phone: "",
       gender: "",
       address: "",
+      dob: "",
     },
     validationSchema: Yup.object({
       first_name: Yup.string().trim().required("First name is required."),
@@ -35,10 +37,12 @@ const Register = () => {
         .oneOf(["m", "f", "o"], 'Gender must be "m", "f", or "o".')
         .optional(),
       address: Yup.string().required("Address is required"),
+      dob: Yup.date().required("Date of Birth is required"),
     }),
     onSubmit: async (values) => {
       console.log("Form values:", values);
       await registerUser(values);
+      toast.success("Registration Successful", successToast);
       navigate("/login");
     },
   });
@@ -156,6 +160,20 @@ const Register = () => {
               </div>
             )}
           </div>
+          <div className="mb-4 flex flex-col items-start">
+            <label className="block mb-1">Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              value={formik.values.dob}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className="w-full border px-3 py-2 rounded"
+            />
+            {formik.touched.dob && formik.errors.dob && (
+              <div className="text-red-500 text-sm">{formik.errors.dob}</div>
+            )}
+          </div>
           <div className="mb-4">
             <label
               htmlFor="phone"
@@ -247,6 +265,14 @@ const Register = () => {
             Register
           </button>
         </form>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="text-indigo-600 hover:underline">
+              Go to login page
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

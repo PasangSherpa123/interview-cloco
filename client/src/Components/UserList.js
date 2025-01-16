@@ -3,6 +3,8 @@ import Table from "./Table";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { addUser, deleteUser, fetchUsers, updateUser } from "../api/userApi";
+import { toast } from "react-toastify";
+import { successToast } from "../Helpers/toasterData";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -68,6 +70,7 @@ const UserList = () => {
             no_of_albums_release: values.noOfAlbumsRelease,
           };
           await updateUser(selectedUser.id, updatedUser);
+          toast.success("User update successful", successToast);
           setUsers((prev) =>
             prev.map((user) =>
               user.id === selectedUser.id
@@ -80,6 +83,7 @@ const UserList = () => {
             ...values,
           };
           await addUser(newUser);
+          toast.success("User add successful", successToast);
           setUsers((prev) => [...prev, newUser]);
         }
 
@@ -95,6 +99,7 @@ const UserList = () => {
   const handleDeleteUser = async () => {
     try {
       await deleteUser(selectedUser.id);
+      toast.success("User delete successful", successToast);
       setUsers((prev) => prev.filter((user) => user.id !== selectedUser.id));
       setShowDeleteModal(false);
     } catch (error) {

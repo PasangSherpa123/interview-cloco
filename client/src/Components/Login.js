@@ -1,12 +1,13 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {useNavigate} from 'react-router';
+import { useNavigate, Link } from "react-router";
 import { loginUser } from "../api/authApi";
-
+import { toast } from "react-toastify";
+import { successToast } from "../Helpers/toasterData";
 
 const Login = () => {
-    const navigate = useNavigate()
+  const navigate = useNavigate();
   // Formik hook with initial values, validation schema, and submit handler
   const formik = useFormik({
     initialValues: {
@@ -24,7 +25,8 @@ const Login = () => {
     onSubmit: async (values) => {
       console.log("Form values:", values);
       await loginUser(values);
-      navigate('/users');
+      toast.success("Login Successful", successToast);
+      navigate("/users");
       // Perform login logic here (e.g., API calls)
     },
   });
@@ -100,6 +102,14 @@ const Login = () => {
             Login
           </button>
         </form>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{" "}
+            <Link to="/register" className="text-indigo-600 hover:underline">
+              Register here
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );

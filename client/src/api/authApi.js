@@ -5,7 +5,7 @@ import apiClient from "../Helpers/api";
 export const loginUser = async (userData) => {
   try {
     const response = await apiClient.post("/auth/login", userData);
-    console.log(response);
+    console.log('response is' ,response);
     localStorage.setItem("authToken", response?.data?.token);
     return response.data;
   } catch (error) {

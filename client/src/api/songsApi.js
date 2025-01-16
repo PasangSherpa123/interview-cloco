@@ -26,6 +26,7 @@ export const addSong = async (songData) => {
 // Update an song
 export const updateSong = async (artistId, id, updatedData) => {
   try {
+    console.log(artistId, id);
     const response = await apiClient.put(`/songs/${artistId}/${id}`, updatedData);
     return response.data;
   } catch (error) {
