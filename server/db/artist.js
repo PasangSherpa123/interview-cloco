@@ -38,6 +38,14 @@ const getArtists = async ({ limit, offset }) => {
   const totalCount = parseInt(totalCountResult[0].total, 10);
   return { artists, totalCount };
 };
+const getAllArtistsDb = async () => {
+  const { rows: artists } = await pool.query(
+    `SELECT * FROM "artist"`,
+  );
+
+  return artists;
+};
+
 
 const updateArtistDb = async ({
   name,
@@ -77,6 +85,8 @@ const deleteArtistDb = async ({ id }) => {
 module.exports = {
   createArtistDb,
   getArtists,
+  getAllArtistsDb,
   updateArtistDb,
   deleteArtistDb,
+
 };

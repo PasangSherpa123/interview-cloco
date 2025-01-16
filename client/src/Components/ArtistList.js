@@ -1,26 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Table from "./Table";
 import {
   fetchArtists,
   addArtist,
   updateArtist,
   deleteArtist,
+  fetchArtistsExport,
 } from "../api/artistApi";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { successToast } from "../Helpers/toasterData";
+import { errorToast, infoToast, successToast } from "../Helpers/toasterData";
+import Papa from "papaparse";
 
 const ArtistList = () => {
   const [artists, setArtists] = useState([]);
+  const [importedArtists, setImportedArtists] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
+
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
+  };
 
   // Fetch artists on component mount
   useEffect(() => {
@@ -139,6 +147,43 @@ const ArtistList = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+  const handleExport = async () => {
+    try {
+      const jsonArtists = await fetchArtistsExport();
+      const csv = Papa.unparse(jsonArtists);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "artists.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.info("Artists exported successfully", infoToast);
+    } catch (error) {
+      console.error("Error exporting artists:", error);
+      toast.warn("Failed to export artists.", errorToast);
+    }
+  };
+
+  const handleImport = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    Papa.parse(file, {
+      header: true, // Ensures CSV headers are parsed as object keys
+      complete: (results) => {
+        const importedArtists = results.data;
+        console.log("Parsed Artists:", importedArtists);
+        setImportedArtists(importedArtists);
+        // sendToBackend(importedArtists);
+      },
+      error: (error) => {
+        console.error("Error parsing CSV:", error);
+      },
+    });
+  };
 
   return (
     <div>
@@ -153,17 +198,24 @@ const ArtistList = () => {
             Add Artist
           </button>
           <button
-            // onClick={() => handleImport()}
+            onClick={() => triggerFileInput()}
             className="bg-green-500 text-white px-4 py-2 rounded"
           >
             Import
           </button>
           <button
-            // onClick={() => handleExport()}
+            onClick={() => handleExport()}
             className="bg-purple-500 text-white px-4 py-2 rounded"
           >
             Export
           </button>
+          <input
+            type="file"
+            accept=".csv"
+            onChange={handleImport}
+            ref={fileInputRef}
+            style={{ display: "none" }}
+          />
         </div>
       </div>
 

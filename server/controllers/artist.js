@@ -6,7 +6,9 @@ const {
   getArtists,
   updateArtistDb,
   deleteArtistDb,
+  getAllArtistsDb,
 } = require("../db/artist");
+const { validateArtistsArray } = require("../middlewares/validateArtistArray");
 
 const createArtist = [
   body("name")
@@ -56,6 +58,34 @@ const createArtist = [
   },
 ];
 
+const createArtistImport = [
+  validateArtistsArray,
+  async (req, res) => {
+    const { name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease } =
+      req.body;
+
+    try {
+      const artist = await createArtistDb({
+        name,
+        dob,
+        gender,
+        address,
+        firstReleaseYear,
+        noOfAlbumsRelease,
+      });
+      res.status(201).json({
+        message: "Artist created successfully!",
+        artist: artist,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while registering the artist." });
+    }
+  },
+];
+
 const getAllArtists = async (req, res) => {
   const { page = 1 } = req.query;
   const limit = 10;
@@ -69,6 +99,12 @@ const getAllArtists = async (req, res) => {
     currentPage: parseInt(page, 10),
     totalPages: Math.ceil(totalCount / limit),
   });
+};
+
+const getAllArtistsExport = async (req, res) => {
+  const artists = await getAllArtistsDb();
+
+  res.status(200).json(artists);
 };
 
 const updateArtistById = async (req, res) => {
@@ -103,7 +139,9 @@ const deleteArtistById = async (req, res) => {
 
 module.exports = {
   createArtist,
+  createArtistImport,
   getAllArtists,
+  getAllArtistsExport,
   updateArtistById,
   deleteArtistById,
 };
