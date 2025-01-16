@@ -13,21 +13,24 @@ const SongsList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedSong, setSelectedSong] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const { artistId } = useParams();
 
   // Fetch songs on component mount
   useEffect(() => {
     const getSongs = async () => {
       try {
-        const data = await fetchSongs(artistId);
+        const data = await fetchSongs({ artistId, currentPage });
         console.log("songs data is", data);
-        setSongs(data);
+        setSongs(data.musics);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Failed to fetch artists:", error);
       }
     };
     getSongs();
-  }, []);
+  }, [currentPage, artistId]);
   const columns = [
     { key: "title", label: "Title" },
     { key: "album_name", label: "Album Name" },
@@ -56,7 +59,7 @@ const SongsList = () => {
             ...values,
             album_name: values.albumName,
           };
-          console.log(selectedSong, 'selected song is this');
+          console.log(selectedSong, "selected song is this");
           await updateSong(
             selectedSong.artist_id,
             selectedSong.id,
@@ -107,7 +110,7 @@ const SongsList = () => {
 
   // Open edit modal
   const handleEdit = (song) => {
-    console.log('edit is ', song);
+    console.log("edit is ", song);
     setSelectedSong(song);
     formik.setValues({
       title: song.title,
@@ -115,6 +118,9 @@ const SongsList = () => {
       genre: song.genre,
     });
     setShowEditModal(true);
+  };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -137,6 +143,9 @@ const SongsList = () => {
           setSelectedSong(artist);
           setShowDeleteModal(true);
         }}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       {/* Add/Edit Modal */}

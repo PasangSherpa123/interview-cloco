@@ -19,7 +19,11 @@ const getMusicsDb = async ({ artistId, limit, offset }) => {
     `SELECT * FROM "music" WHERE artist_id = $1 LIMIT $2 OFFSET $3 `,
     [artistId, limit, offset]
   );
-  return musics;
+  const { rows: totalCountResult } = await pool.query(
+    `SELECT COUNT(*) AS total FROM "music"`
+  );
+  const totalCount = parseInt(totalCountResult[0].total, 10);
+  return { musics, totalCount };
 };
 
 const updateMusicDb = async ({ artistId, title, albumName, genre, id }) => {
@@ -58,5 +62,5 @@ module.exports = {
   createMusicDb,
   getMusicsDb,
   updateMusicDb,
-  deleteMusicDb
+  deleteMusicDb,
 };

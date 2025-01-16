@@ -18,20 +18,23 @@ const ArtistList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   // Fetch artists on component mount
   useEffect(() => {
     const getArtists = async () => {
       try {
-        const data = await fetchArtists();
-        setArtists(data);
+        const data = await fetchArtists(currentPage);
+        setArtists(data.artists);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Failed to fetch artists:", error);
       }
     };
     getArtists();
-  }, []);
+  }, [currentPage]);
 
   const columns = [
     { key: "name", label: "Name" },
@@ -133,6 +136,9 @@ const ArtistList = () => {
     });
     setShowEditModal(true);
   };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div>
@@ -173,6 +179,9 @@ const ArtistList = () => {
           navigate(`/artists/${artist.id}/songs`);
         }}
         showManageSongs={true}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       {/* Add/Edit Modal */}

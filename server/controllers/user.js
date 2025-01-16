@@ -89,11 +89,17 @@ const createUser = [
 
 const getAllUsers = async (req, res) => {
   const { page = 1 } = req.query;
-  const limit = 12;
+  const limit = 10;
   const offset = (page - 1) * limit;
 
-  const users = await getUsersDb(limit, offset);
-  res.status(200).json(users);
+  const { users, totalCount } = await getUsersDb({ limit, offset });
+
+  res.status(200).json({
+    users,
+    totalCount,
+    currentPage: parseInt(page, 10),
+    totalPages: Math.ceil(totalCount / limit),
+  });
 };
 
 const updateUserById = async (req, res) => {

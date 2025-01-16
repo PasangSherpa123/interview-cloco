@@ -2,9 +2,9 @@
 import apiClient from "../Helpers/api";
 
 // Fetch all user
-export const fetchUsers = async () => {
+export const fetchUsers = async (currentPage) => {
   try {
-    const response = await apiClient.get("/user");
+    const response = await apiClient.get(`/user?page=${currentPage}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);

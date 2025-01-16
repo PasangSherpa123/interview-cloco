@@ -12,19 +12,22 @@ const UserList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const data = await fetchUsers();
-        console.log("data is ", data);
-        setUsers(data);
+        const data = await fetchUsers(currentPage);
+
+        setUsers(data.users);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Failed to fetch artists:", error);
       }
     };
     getUsers();
-  }, []);
+  }, [currentPage]);
 
   const columns = [
     { key: "first_name", label: "First Name" },
@@ -119,7 +122,9 @@ const UserList = () => {
     });
     setShowEditModal(true);
   };
-
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -140,6 +145,9 @@ const UserList = () => {
           setSelectedUser(user);
           setShowDeleteModal(true);
         }}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       {/* Add/Edit Modal */}
