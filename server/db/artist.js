@@ -29,10 +29,14 @@ const createArtistDb = async ({
 
 const getArtists = async ({ limit, offset }) => {
   const { rows: artists } = await pool.query(
-    `SELECT * FROM "artist" LIMIT $1 OFFSET $2 `,
+    `SELECT * FROM "artist" LIMIT $1 OFFSET $2`,
     [limit, offset]
   );
-  return artists;
+  const { rows: totalCountResult } = await pool.query(
+    `SELECT COUNT(*) AS total FROM "artist"`
+  );
+  const totalCount = parseInt(totalCountResult[0].total, 10);
+  return { artists, totalCount };
 };
 
 const updateArtistDb = async ({

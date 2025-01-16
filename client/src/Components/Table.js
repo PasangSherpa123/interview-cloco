@@ -1,6 +1,16 @@
 import React from "react";
 
-const Table = ({ columns, data, onEdit, onDelete, onManageSongs, showManageSongs }) => {
+const Table = ({
+  columns,
+  data,
+  onEdit,
+  onDelete,
+  onManageSongs,
+  showManageSongs,
+  currentPage=0,
+  totalPages=0,
+  onPageChange, 
+}) => {
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-200">
@@ -26,7 +36,6 @@ const Table = ({ columns, data, onEdit, onDelete, onManageSongs, showManageSongs
                 </td>
               ))}
               <td className="py-3 px-6 text-center">
-                {/* Conditionally Render Manage Songs Button */}
                 {showManageSongs && (
                   <button
                     onClick={() => onManageSongs(row)}
@@ -35,14 +44,12 @@ const Table = ({ columns, data, onEdit, onDelete, onManageSongs, showManageSongs
                     Manage Songs
                   </button>
                 )}
-                {/* Edit Button */}
                 <button
                   onClick={() => onEdit(row)}
                   className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
                 >
                   Edit
                 </button>
-                {/* Delete Button */}
                 <button
                   onClick={() => onDelete(row)}
                   className="bg-red-500 text-white px-2 py-1 rounded"
@@ -54,6 +61,27 @@ const Table = ({ columns, data, onEdit, onDelete, onManageSongs, showManageSongs
           ))}
         </tbody>
       </table>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

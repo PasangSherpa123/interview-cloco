@@ -9,6 +9,8 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { successToast } from "../Helpers/toasterData";
 
 const ArtistList = () => {
   const [artists, setArtists] = useState([]);
@@ -16,20 +18,23 @@ const ArtistList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedArtist, setSelectedArtist] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
   // Fetch artists on component mount
   useEffect(() => {
     const getArtists = async () => {
       try {
-        const data = await fetchArtists();
-        setArtists(data);
+        const data = await fetchArtists(currentPage);
+        setArtists(data.artists);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Failed to fetch artists:", error);
       }
     };
     getArtists();
-  }, []);
+  }, [currentPage]);
 
   const columns = [
     { key: "name", label: "Name" },
@@ -74,6 +79,7 @@ const ArtistList = () => {
             no_of_albums_release: values.noOfAlbumsRelease,
           };
           await updateArtist(selectedArtist.id, updatedArtist);
+          toast.success("Artist update successful", successToast);
           setArtists((prev) =>
             prev.map((artist) =>
               artist.id === selectedArtist.id
@@ -89,6 +95,7 @@ const ArtistList = () => {
             no_of_albums_release: values.noOfAlbumsRelease,
           };
           await addArtist(newArtist);
+          toast.success("Artist add successful", successToast);
           setArtists((prev) => [...prev, newArtist]);
         }
 
@@ -105,6 +112,7 @@ const ArtistList = () => {
   const handleDeleteArtist = async () => {
     try {
       await deleteArtist(selectedArtist.id);
+      toast.success("Artist delete successful", successToast);
       setArtists((prev) =>
         prev.filter((artist) => artist.id !== selectedArtist.id)
       );
@@ -128,17 +136,35 @@ const ArtistList = () => {
     });
     setShowEditModal(true);
   };
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Artists</h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Add Artist
-        </button>
+        <div className="flex space-x-2">
+          {/* Add Artist Button */}
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Add Artist
+          </button>
+          <button
+            // onClick={() => handleImport()}
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            Import
+          </button>
+          <button
+            // onClick={() => handleExport()}
+            className="bg-purple-500 text-white px-4 py-2 rounded"
+          >
+            Export
+          </button>
+        </div>
       </div>
 
       <Table
@@ -153,6 +179,9 @@ const ArtistList = () => {
           navigate(`/artists/${artist.id}/songs`);
         }}
         showManageSongs={true}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       {/* Add/Edit Modal */}
@@ -275,6 +304,7 @@ const ArtistList = () => {
                 <button
                   type="button"
                   onClick={() => {
+                    formik.resetForm();
                     setShowAddModal(false);
                     setShowEditModal(false);
                   }}

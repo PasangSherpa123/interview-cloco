@@ -3,6 +3,8 @@ import Table from "./Table";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { addUser, deleteUser, fetchUsers, updateUser } from "../api/userApi";
+import { toast } from "react-toastify";
+import { successToast } from "../Helpers/toasterData";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -10,19 +12,22 @@ const UserList = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const data = await fetchUsers();
-        console.log("data is ", data);
-        setUsers(data);
+        const data = await fetchUsers(currentPage);
+
+        setUsers(data.users);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Failed to fetch artists:", error);
       }
     };
     getUsers();
-  }, []);
+  }, [currentPage]);
 
   const columns = [
     { key: "first_name", label: "First Name" },
@@ -68,6 +73,7 @@ const UserList = () => {
             no_of_albums_release: values.noOfAlbumsRelease,
           };
           await updateUser(selectedUser.id, updatedUser);
+          toast.success("User update successful", successToast);
           setUsers((prev) =>
             prev.map((user) =>
               user.id === selectedUser.id
@@ -80,6 +86,7 @@ const UserList = () => {
             ...values,
           };
           await addUser(newUser);
+          toast.success("User add successful", successToast);
           setUsers((prev) => [...prev, newUser]);
         }
 
@@ -95,6 +102,7 @@ const UserList = () => {
   const handleDeleteUser = async () => {
     try {
       await deleteUser(selectedUser.id);
+      toast.success("User delete successful", successToast);
       setUsers((prev) => prev.filter((user) => user.id !== selectedUser.id));
       setShowDeleteModal(false);
     } catch (error) {
@@ -114,7 +122,9 @@ const UserList = () => {
     });
     setShowEditModal(true);
   };
-
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -135,6 +145,9 @@ const UserList = () => {
           setSelectedUser(user);
           setShowDeleteModal(true);
         }}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       {/* Add/Edit Modal */}
@@ -269,6 +282,7 @@ const UserList = () => {
                 <button
                   type="button"
                   onClick={() => {
+                    formik.resetForm();
                     setShowAddModal(false);
                     setShowEditModal(false);
                   }}

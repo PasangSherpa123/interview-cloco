@@ -2,9 +2,9 @@
 import apiClient from '../Helpers/api';
 
 // Fetch all artists
-export const fetchArtists = async() => {
+export const fetchArtists = async(currentPage) => {
   try {
-    const response = await apiClient.get('/artist');
+    const response = await apiClient.get(`/artist?page=${currentPage}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching artists:', error);

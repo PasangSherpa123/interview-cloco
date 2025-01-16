@@ -2,9 +2,9 @@
 import apiClient from '../Helpers/api';
 
 // Fetch all songs
-export const fetchSongs = async(artistId) => {
+export const fetchSongs = async({artistId, currentPage}) => {
   try {
-    const response = await apiClient.get(`/songs/${artistId}`);
+    const response = await apiClient.get(`/songs/${artistId}?page=${currentPage}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching songs:', error);
@@ -26,6 +26,7 @@ export const addSong = async (songData) => {
 // Update an song
 export const updateSong = async (artistId, id, updatedData) => {
   try {
+    console.log(artistId, id);
     const response = await apiClient.put(`/songs/${artistId}/${id}`, updatedData);
     return response.data;
   } catch (error) {

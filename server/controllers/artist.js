@@ -58,11 +58,17 @@ const createArtist = [
 
 const getAllArtists = async (req, res) => {
   const { page = 1 } = req.query;
-  const limit = 12;
+  const limit = 10;
   const offset = (page - 1) * limit;
 
-  const artists = await getArtists(limit, offset);
-  res.status(200).json(artists);
+  const { artists, totalCount } = await getArtists({ limit, offset });
+
+  res.status(200).json({
+    artists,
+    totalCount,
+    currentPage: parseInt(page, 10),
+    totalPages: Math.ceil(totalCount / limit),
+  });
 };
 
 const updateArtistById = async (req, res) => {
@@ -87,7 +93,7 @@ const updateArtistById = async (req, res) => {
 const deleteArtistById = async (req, res) => {
   const { id } = req.params;
   console.log(req.params);
-  console.log('id is ', id);
+  console.log("id is ", id);
   const deletedArtist = await deleteArtistDb({ id });
   res.status(200).json({
     message: "Artist deleted successfully",

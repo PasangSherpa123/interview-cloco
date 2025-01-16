@@ -17,28 +17,12 @@ app.get("/", (req, res) => {
 });
 
 
-app.post("/register", async (req, res) => {
-  try {
-    // const { description } = req.body;
-  
-    const allTodos = await pool.query('SELECT * FROM "user"');
-    console.log(allTodos);
-
-
-    res.json(newTodo.rows[0]);
-  } catch (err) {
-    console.error(err.message);
-  }
-});
-
-
-
-process.on("SIGINT", async () => {
-  console.log("Closing database connection...");
-  await pool.end();
-  console.log("Database connection closed.");
-  process.exit(0);
-});
+// process.on("SIGINT", async () => {
+//   console.log("Closing database connection...");
+//   await pool.end();
+//   console.log("Database connection closed.");
+//   process.exit(0);
+// });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

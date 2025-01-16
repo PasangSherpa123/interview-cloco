@@ -1,5 +1,10 @@
 const { body, validationResult } = require("express-validator");
-const { createMusicDb, getMusicsDb, updateMusicDb, deleteMusicDb } = require("../db/music");
+const {
+  createMusicDb,
+  getMusicsDb,
+  updateMusicDb,
+  deleteMusicDb,
+} = require("../db/music");
 
 const createMusic = [
   body("artistId")
@@ -49,18 +54,21 @@ const createMusic = [
 const getAllMusic = async (req, res) => {
   const { page = 1 } = req.query;
   const { artistId } = req.params;
-  const limit = 12;
+  const limit = 10;
   const offset = (page - 1) * limit;
-  console.log(artistId);
 
-  const artists = await getMusicsDb({ limit, offset, artistId });
-  res.status(200).json(artists);
+  const { musics, totalCount } = await getMusicsDb({ limit, offset, artistId });
+  res.status(200).json({
+    musics,
+    totalCount,
+    currentPage: parseInt(page, 10),
+    totalPages: Math.ceil(totalCount / limit),
+  });
 };
 
 const updateMusicById = async (req, res) => {
   const { artistId, musicId: id } = req.params;
   const { title, albumName, genre } = req.body;
-  console.log({ title, albumName, genre });
 
   const music = await updateMusicDb({
     artistId,
@@ -76,7 +84,6 @@ const updateMusicById = async (req, res) => {
 };
 
 const deleteMusicById = async (req, res) => {
-  console.log(req.params)
   const { musicId } = req.params;
   console.log(musicId);
 
@@ -93,5 +100,5 @@ module.exports = {
   createMusic,
   getAllMusic,
   updateMusicById,
-  deleteMusicById
+  deleteMusicById,
 };

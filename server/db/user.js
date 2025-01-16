@@ -51,7 +51,11 @@ const getUsersDb = async ({ limit, offset }) => {
     `SELECT id, first_name, last_name, email, phone, dob, gender, address FROM "user" LIMIT $1 OFFSET $2`,
     [limit, offset]
   );
-  return users;
+  const { rows: totalCountResult } = await pool.query(
+    `SELECT COUNT(*) AS total FROM "user"`
+  );
+  const totalCount = parseInt(totalCountResult[0].total, 10);
+  return {users, totalCount};
 };
 
 const updateUserDb = async ({
@@ -79,7 +83,6 @@ const updateUserDb = async ({
   return user[0];
 };
 
-
 const deleteUserDb = async ({ id }) => {
   const { rows: user } = await pool.query(
     `DELETE FROM "user" where id = $1 returning *`,
@@ -94,5 +97,5 @@ module.exports = {
   getUserByPhoneDb,
   getUsersDb,
   updateUserDb,
-  deleteUserDb
+  deleteUserDb,
 };
