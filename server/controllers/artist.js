@@ -6,7 +6,10 @@ const {
   getArtists,
   updateArtistDb,
   deleteArtistDb,
+  getAllArtistsDb,
+  createArtistsImportDb,
 } = require("../db/artist");
+const { validateArtistsArray } = require("../middlewares/validateArtistArray");
 
 const createArtist = [
   body("name")
@@ -56,6 +59,53 @@ const createArtist = [
   },
 ];
 
+const createArtistImport = [
+  validateArtistsArray,
+  async (req, res) => {
+    const { artists } = req.body;
+    // const { name, dob, gender, address, firstReleaseYear, noOfAlbumsRelease } =
+    //   req.body;
+
+    console.log(artists);
+    try {
+      const values = [];
+      const placeholders = [];
+
+      // Construct the query dynamically
+      artists.forEach((artist, index) => {
+        const start = index * 6;
+        placeholders.push(
+          `($${start + 1}, $${start + 2}, $${start + 3}, $${start + 4}, $${
+            start + 5
+          }, $${start + 6}, NOW(), NOW())`
+        );
+        values.push(
+          artist.name,
+          artist.gender,
+          artist.dob,
+          artist.address,
+          artist.first_release_year,
+          artist.no_of_albums_release
+        );
+      });
+      console.log(values);
+      console.log(placeholders.join(", "));
+
+      const createdArtists = await createArtistsImportDb({
+        placeholder: placeholders.join(", "),
+        values,
+      });
+      console.log(createdArtists);
+      res.status(200).json(createdArtists);
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while registering the artist." });
+    }
+  },
+];
+
 const getAllArtists = async (req, res) => {
   const { page = 1 } = req.query;
   const limit = 10;
@@ -69,6 +119,12 @@ const getAllArtists = async (req, res) => {
     currentPage: parseInt(page, 10),
     totalPages: Math.ceil(totalCount / limit),
   });
+};
+
+const getAllArtistsExport = async (req, res) => {
+  const artists = await getAllArtistsDb();
+
+  res.status(200).json(artists);
 };
 
 const updateArtistById = async (req, res) => {
@@ -103,7 +159,9 @@ const deleteArtistById = async (req, res) => {
 
 module.exports = {
   createArtist,
+  createArtistImport,
   getAllArtists,
+  getAllArtistsExport,
   updateArtistById,
   deleteArtistById,
 };

@@ -8,7 +8,7 @@ export const fetchUsers = async (currentPage) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
-    throw error;
+    return error;
   }
 };
 
@@ -19,7 +19,7 @@ export const addUser = async (artistData) => {
     return response.data;
   } catch (error) {
     console.error("Error adding user:", error);
-    throw error;
+    return error;
   }
 };
 
@@ -30,7 +30,7 @@ export const updateUser = async (id, updatedData) => {
     return response.data;
   } catch (error) {
     console.error("Error updating user:", error);
-    throw error;
+    return error;
   }
 };
 
@@ -41,6 +41,6 @@ export const deleteUser = async (id) => {
     return response.data;
   } catch (error) {
     console.error("Error deleting user:", error);
-    throw error;
+    return error;
   }
 };

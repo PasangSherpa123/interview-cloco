@@ -7,7 +7,6 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
-
 // Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
@@ -26,7 +25,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log(error.response.data.error);
+    console.log(error.response.data);
     if (error.response) {
       const { status, data } = error.response;
 
@@ -36,12 +35,14 @@ apiClient.interceptors.response.use(
         window.location.href = "/login"; // Redirect to login page
         toast.error("Session expired. Please log in again.", errorToast);
       }
+      if (status === 400) {
+        console.log(data.errors[0].msg);
+        toast.error(data.errors[0].msg, errorToast);
+      }
 
       // Show other error messages
       if (data?.error) {
-        console.log("error message", data?.error);
-        // console.log(toast.POSITION.TOP_RIGHT);
-        console.log(toast.error);
+
         toast.error(data.error, errorToast);
       } else {
         toast.error("An error occurred. Please try again later.", errorToast);

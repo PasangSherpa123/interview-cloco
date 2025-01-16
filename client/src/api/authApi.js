@@ -10,7 +10,7 @@ export const loginUser = async (userData) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
-    throw error;
+    return error;
   }
 };
 //Register user
@@ -20,6 +20,6 @@ export const registerUser = async (userData) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching users:", error);
-    throw error;
+    return error;
   }
 };
